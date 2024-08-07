@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Infrastructure\Exchange\Rexchange;
+namespace App\Infrastructure\Exchange\Rexchange\DTO;
 
-readonly class ToolsDto
+readonly class ToolDTO
 {
     public function __construct(
         public int $id,

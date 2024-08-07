@@ -7,6 +7,8 @@ use App\Domain\Exchange\Exception\ServiceUnavailableException;
 use App\Domain\Exchange\Exception\UnauthorizedException;
 use App\Domain\Exchange\ExchangeProviderInterface;
 use App\Infrastructure\Exchange\CommonExchangeProviderTrait;
+use App\Infrastructure\Exchange\Rexchange\DTO\BalanceDTO;
+use App\Infrastructure\Exchange\Rexchange\DTO\ToolDTO;
 use JsonException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -72,11 +74,17 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      * @throws TransportExceptionInterface
      * @throws UnauthorizedException
      */
-    public function getBalance(): int
+    public function getBalance(): BalanceDTO
     {
         $content = $this->getContent($this->getApiUrl() . 'me');
 
-        return $content['merchant']['balance'];
+        return new BalanceDTO(
+            id: $content['merchant']['id'],
+            name: $content['merchant']['name'],
+            balance: $content['merchant']['balance'],
+            createDate: $content['merchant']['create_date'],
+            webhookUrl: $content['merchant']['webhook_url']
+        );
     }
 
     private function getTools(array $content): array
@@ -84,7 +92,7 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
         $tools = [];
 
         foreach ($content['tools'] as $tool) {
-            $tools[] = new ToolsDto(
+            $tools[] = new ToolDTO(
                 id: $tool['id'],
                 name: $tool['name'],
                 minPayment: $tool['min_payment'],
