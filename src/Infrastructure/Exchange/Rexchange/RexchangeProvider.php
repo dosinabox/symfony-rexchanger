@@ -6,9 +6,9 @@ use App\Domain\Exchange\Exception\ForbiddenException;
 use App\Domain\Exchange\Exception\ServiceUnavailableException;
 use App\Domain\Exchange\Exception\UnauthorizedException;
 use App\Domain\Exchange\ExchangeProviderInterface;
-use App\Infrastructure\Exchange\CommonExchangeProviderTrait;
 use App\Infrastructure\Exchange\Rexchange\DTO\BalanceDTO;
 use App\Infrastructure\Exchange\Rexchange\DTO\ToolDTO;
+use App\Infrastructure\Service\ApiService;
 use JsonException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -17,7 +17,9 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 final readonly class RexchangeProvider implements ExchangeProviderInterface
 {
-    use CommonExchangeProviderTrait;
+    public function __construct(private ApiService $apiService)
+    {
+    }
 
     public function getApiUrl(): string
     {
@@ -41,7 +43,7 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      */
     public function getToolsIn(): array
     {
-        $content = $this->getContent($this->getApiUrl() . 'tools_in');
+        $content = $this->apiService->getContent($this->getApiUrl() . 'tools_in');
 
         return $this->getTools($content);
     }
@@ -58,7 +60,7 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      */
     public function getToolsOut(): array
     {
-        $content = $this->getContent($this->getApiUrl() . 'tools_out');
+        $content = $this->apiService->getContent($this->getApiUrl() . 'tools_out');
 
         return $this->getTools($content);
     }
@@ -76,7 +78,7 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      */
     public function getBalance(): BalanceDTO
     {
-        $content = $this->getContent($this->getApiUrl() . 'me');
+        $content = $this->apiService->getContent($this->getApiUrl() . 'me');
 
         return new BalanceDTO(
             id: $content['merchant']['id'],

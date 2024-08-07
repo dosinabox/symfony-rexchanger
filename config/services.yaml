@@ -24,3 +24,7 @@ services:
     # please note that last definitions always *replace* previous ones
     
     App\Domain\Exchange\ExchangeProviderInterface: '@App\Infrastructure\Exchange\Rexchange\RexchangeProvider'
+
+    App\Infrastructure\Service\ApiService:
+        arguments:
+            $client: '@http_client'

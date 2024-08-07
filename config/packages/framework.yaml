@@ -9,6 +9,11 @@ framework:
     #esi: true
     #fragments: true
 
+    http_client:
+        default_options:
+            headers:
+                'Token': '%env(REXCHANGE_API_KEY)%'
+
 when@test:
     framework:
         test: true

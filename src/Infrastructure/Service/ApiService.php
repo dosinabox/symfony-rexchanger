@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Exchange;
+namespace App\Infrastructure\Service;
 
 use App\Domain\Exchange\Exception\ForbiddenException;
 use App\Domain\Exchange\Exception\ServiceUnavailableException;
@@ -13,9 +13,9 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-trait CommonExchangeProviderTrait
+readonly class ApiService
 {
-    public function __construct(protected readonly HttpClientInterface $client)
+    public function __construct(private HttpClientInterface $client)
     {
     }
 
