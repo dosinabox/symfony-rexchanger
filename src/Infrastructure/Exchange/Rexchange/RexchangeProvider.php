@@ -3,7 +3,6 @@
 namespace App\Infrastructure\Exchange\Rexchange;
 
 use App\Domain\Exchange\Exception\ForbiddenException;
-use App\Domain\Exchange\Exception\InvalidResponseException;
 use App\Domain\Exchange\Exception\ServiceUnavailableException;
 use App\Domain\Exchange\Exception\UnauthorizedException;
 use App\Domain\Exchange\ExchangeProviderInterface;
@@ -38,9 +37,11 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      * @throws ServerExceptionInterface
      * @throws ForbiddenException
      */
-    public function getToolsIn(): mixed
+    public function getToolsIn(): array
     {
-        return $this->getContent($this->getApiUrl() . 'tools_in');
+        $content = $this->getContent($this->getApiUrl() . 'tools_in');
+
+        return $this->getTools($content);
     }
 
     /**
@@ -53,16 +54,17 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      * @throws ServerExceptionInterface
      * @throws ForbiddenException
      */
-    public function getToolsOut(): mixed
+    public function getToolsOut(): array
     {
-        return $this->getContent($this->getApiUrl() . 'tools_out');
+        $content = $this->getContent($this->getApiUrl() . 'tools_out');
+
+        return $this->getTools($content);
     }
 
     /**
      * @return int
      * @throws ClientExceptionInterface
      * @throws ForbiddenException
-     * @throws InvalidResponseException
      * @throws JsonException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -74,16 +76,27 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
     {
         $content = $this->getContent($this->getApiUrl() . 'me');
 
-        if (!array_key_exists('merchant', $content)) {
-            throw new InvalidResponseException();
+        return $content['merchant']['balance'];
+    }
+
+    private function getTools(array $content): array
+    {
+        $tools = [];
+
+        foreach ($content['tools'] as $tool) {
+            $tools[] = new ToolsDto(
+                id: $tool['id'],
+                name: $tool['name'],
+                minPayment: $tool['min_payment'],
+                maxPayment: $tool['max_payment'],
+                currency: $tool['currency'],
+                network: $tool['network'],
+                roundedStr: $tool['rounded_str'],
+                costInUSDT: $tool['cost_in_usdt'],
+                isFiat: $tool['is_fiat']
+            );
         }
 
-        $merchant = $content['merchant'];
-
-        if (!array_key_exists('balance', $merchant)) {
-            throw new InvalidResponseException();
-        }
-
-        return $merchant['balance'];
+        return $tools;
     }
 }
