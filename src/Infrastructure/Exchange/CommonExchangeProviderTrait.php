@@ -38,7 +38,7 @@ trait CommonExchangeProviderTrait
             throw new ServiceUnavailableException();
         }
 
-        if ($code === Response::HTTP_UNAUTHORIZED) {
+        if ($code === Response::HTTP_UNAUTHORIZED || $code === Response::HTTP_FORBIDDEN) {
             throw new UnauthorizedException();
         }
 
