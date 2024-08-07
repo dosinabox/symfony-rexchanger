@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Exchange\Rexchange;
 
+use App\Domain\Exchange\Exception\ForbiddenException;
 use App\Domain\Exchange\Exception\ServiceUnavailableException;
 use App\Domain\Exchange\Exception\UnauthorizedException;
 use App\Domain\Exchange\ExchangeProviderInterface;
@@ -34,6 +35,7 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      * @throws TransportExceptionInterface
      * @throws ServiceUnavailableException
      * @throws ServerExceptionInterface
+     * @throws ForbiddenException
      */
     public function getToolsIn(): mixed
     {
@@ -48,6 +50,7 @@ final readonly class RexchangeProvider implements ExchangeProviderInterface
      * @throws TransportExceptionInterface
      * @throws ServiceUnavailableException
      * @throws ServerExceptionInterface
+     * @throws ForbiddenException
      */
     public function getToolsOut(): mixed
     {

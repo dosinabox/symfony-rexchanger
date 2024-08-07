@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Exchange;
 
+use App\Domain\Exchange\Exception\ForbiddenException;
 use App\Domain\Exchange\Exception\ServiceUnavailableException;
 use App\Domain\Exchange\Exception\UnauthorizedException;
 use JsonException;
@@ -22,6 +23,7 @@ trait CommonExchangeProviderTrait
      * @param string $url
      * @return mixed
      * @throws ClientExceptionInterface
+     * @throws ForbiddenException
      * @throws JsonException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -38,8 +40,12 @@ trait CommonExchangeProviderTrait
             throw new ServiceUnavailableException();
         }
 
-        if ($code === Response::HTTP_UNAUTHORIZED || $code === Response::HTTP_FORBIDDEN) {
+        if ($code === Response::HTTP_UNAUTHORIZED) {
             throw new UnauthorizedException();
+        }
+
+        if ($code === Response::HTTP_FORBIDDEN) {
+            throw new ForbiddenException();
         }
 
         return json_decode(
