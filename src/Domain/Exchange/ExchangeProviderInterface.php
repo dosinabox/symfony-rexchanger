@@ -11,4 +11,6 @@ interface ExchangeProviderInterface
     public function getToolsIn(): mixed;
 
     public function getToolsOut(): mixed;
+
+    public function getBalance(): int;
 }
